@@ -12,21 +12,21 @@ const MAX_LIMIT = 100;
 matchesRouter.get("/", async (req, res) => {
   const parsed = listMatchesQuerySchema.safeParse(req.query);
   if(!parsed.success) {
-    return res.status(400).json({ error: 'query parameters are invalid', details: JSON.stringify(parsed.error) })
+    return res.status(400).json({ error: 'query parameters are invalid', details: parsed.error.issues })
   }
   const limit = Math.min(parsed.data.limit ?? 50, MAX_LIMIT) // set a maximum limit to prevent abuse;
   try{ 
     const data = await db.select().from(matches).limit(limit).orderBy((desc(matches.createdAt)));
     res.json({ data })
   } catch(error) {
-    return res.status(500).json({ error: 'Failed to retrieve matches', details: JSON.stringify(error) })
+    return res.status(500).json({ error: 'Failed to retrieve matches' })
   }
 });
 
 matchesRouter.post("/", async (req, res) => {
   const parsed = createMatchSchema.safeParse(req.body);
   if(!parsed.success) {
-    return res.status(400).json({ error: 'payload is invalid', details: JSON.stringify(parsed.error) })
+    return res.status(400).json({ error: 'payload is invalid', details: parsed.error.issues })
   }
   const { startTime, endTime, homeScore, awayScore } = parsed.data
   try {
@@ -40,7 +40,7 @@ matchesRouter.post("/", async (req, res) => {
     }).returning()
     res.status(201).json({ data: event })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create match', details: JSON.stringify(error) })
+    res.status(500).json({ error: 'Failed to create match' })
   }
 
 })
