@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, serial, text, timestamp, integer,jsonb } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, serial, text, timestamp, integer,jsonb,  } from "drizzle-orm/pg-core";
 
 export const matchStatusEnum = pgEnum("match_status", ["scheduled", "live", "finished"])
 
@@ -10,8 +10,8 @@ export const matches = pgTable("matches", {
   status: matchStatusEnum('status').notNull().default("scheduled"),
   startTime: timestamp("start_time"),
   endTime: timestamp("end_time"),
-  homeScore: text("home_score").notNull(),
-  awayScore: text("away_score").notNull(),
+  homeScore: text("home_score").notNull().default("0"),
+  awayScore: text("away_score").notNull().default("0"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
